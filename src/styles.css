@@ -1,0 +1,38 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    margin: 0;
+    padding: 0;
+}
+
+.app {
+    padding: 18px;
+    max-width: 1024px;
+    margin: 0 auto;
+}
+
+.controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px
+}
+
+.points-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px
+}
+
+.points-table td,
+.points-table th {
+    border: 1px solid #eee;
+    padding: 6px
+}
+
+.chart-wrap {
+    height: 360px;
+}
+
+.export {
+    margin-top: 12px
+}

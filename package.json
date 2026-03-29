@@ -1,0 +1,42 @@
+{
+  "name": "freekawa-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reference web app for IKAWA Home profile editing, direct Bluetooth control, and live roast telemetry.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tylergunderson/freekawa-web.git"
+  },
+  "homepage": "https://github.com/tylergunderson/freekawa-web#readme",
+  "bugs": {
+    "url": "https://github.com/tylergunderson/freekawa-web/issues"
+  },
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit --pretty false",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@freekawa/ikawa-home-protocol": "0.1.0",
+    "@freekawa/ikawa-home-web-bluetooth": "0.1.0",
+    "@mui/icons-material": "^5.14.0",
+    "@mui/material": "^5.14.7",
+    "chart.js": "^4.4.0",
+    "protobufjs": "^8.0.0",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript": "^5.5.4",
+    "vite": "^7.3.1"
+  }
+}

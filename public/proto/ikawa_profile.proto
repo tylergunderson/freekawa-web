@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package ikawa;
+
+// Point message - used for curve_points, annotations, and meta_points
+// Raw units: x = tenths of seconds, y = tenths of degrees Celsius
+message Point {
+  int32 x = 1; // time in tenths of seconds (e.g., 1200 = 120.0 seconds)
+  int32 y = 2; // temperature in tenths of °C (e.g., 2500 = 250.0°C) or airflow units
+}
+
+// Metadata message - nested structure in field 8 (84% of profiles)
+message Metadata {
+  string share_token = 1; // 28-char alphanumeric token for sharing
+  string short_id    = 2; // 20-char alphanumeric short identifier
+  string farm        = 3; // Coffee origin/farm name
+  string spare       = 4; // Usually empty string
+  int32  zero        = 5; // Usually 0 or 1
+}
+
+// Main profile message - handles all observed field variations
+message IkawaProfile {
+  // Core fields (100% presence)
+  int32          version      = 1; // Profile version, always 1
+  bytes          device_token = 2; // 16-byte device identifier
+  string         profile_name = 3; // Human-readable profile name
+  repeated Point curve_points = 4; // Temperature curve (4-7 points)
+  repeated Point annotations  = 5; // Airflow settings (2-3 points)
+  int32          flag         = 6; // Profile flag, usually 1
+  repeated Point meta_points  = 7; // Roast end/cooling markers
+
+  // Optional fields - metadata variations
+  Metadata metadata        = 8; // 84% - nested message with sharing info
+  string   extra_string_9  = 9; // 16% - alternative share_token (when field 8 absent)
+  bytes    field_10        = 10; // 2% - unknown nested message (rarely present)
+  string   extra_string_12 = 12; // 16% - flag string, typically "0" (when field 8 absent)
+}

@@ -1,0 +1,10 @@
+export const IKAWA_BLE_SERVICE_UUID =
+    "c92a6046-6c8d-4116-9d1d-d20a8f6a245f";
+
+export const IKAWA_BLE_NOTIFY_CHARACTERISTIC_UUID =
+    "948c5059-7f00-46d9-ac55-bf090ae066e3";
+
+export const IKAWA_BLE_WRITE_CHARACTERISTIC_UUID =
+    "851a4582-19c1-4e6c-ab37-e7a03766ba16";
+
+export const BLE_DIRECT_SEND_ENABLED = true;

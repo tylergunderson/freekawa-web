@@ -1,0 +1,173 @@
+// Unified Ikawa Profile Schema Documentation
+//
+// This file documents ALL observed field variations across the 100 profile library.
+// It is NOT intended for direct use with protoc - use ikawa_profile.proto for encoding.
+//
+// Purpose: Reference documentation for the flexible decoder implementation.
+//
+// Field Presence Statistics (100 profiles):
+//   Field 1 (version):       100% - always int32
+//   Field 2 (device_token):  100% - bytes (76%) or nested message (24%)
+//   Field 3 (profile_name):  100% - string (73%) or nested message (27%)
+//   Field 4 (curve_points):  100% - repeated nested Point message
+//   Field 5 (annotations):   100% - repeated nested Point message (airflow)
+//   Field 6 (flag):          100% - always int32
+//   Field 7 (meta_points):   100% - repeated nested Point message
+//   Field 8 (metadata):       86% - nested Metadata (84) or string (2)
+//   Field 9 (share_token):    16% - string (alternative to field 8)
+//   Field 10 (unknown):        2% - nested message
+//   Field 12 (flag_string):   16% - string (typically "0")
+
+syntax = "proto3";
+
+package ikawa_unified;
+
+// Point message - used for curve_points, annotations, and meta_points
+// Raw units: x = tenths of seconds, y = tenths of degrees Celsius
+message Point {
+  int32 x = 1; // time in tenths of seconds (e.g., 1200 = 120.0 seconds = 2 minutes)
+  int32 y = 2; // temperature in tenths of °C (e.g., 2500 = 250.0°C) or airflow units
+}
+
+// Metadata message - nested structure in field 8 (84% of profiles)
+// Contains sharing and origin information
+message Metadata {
+  string share_token = 1; // 28-char alphanumeric token for sharing
+  string short_id    = 2; // 20-char alphanumeric short identifier
+  string farm        = 3; // Coffee origin/farm name (e.g., "Kambera Gesha, Panama")
+  string spare       = 4; // Usually empty string
+  int32  zero        = 5; // Usually 0 or 1
+}
+
+// Roast marker for stage events (derived from meta_points or other fields)
+message RoastMarker {
+  int32  time_raw = 1; // Time in tenths of seconds
+  string label    = 2; // Optional text label
+  enum StageType {
+    UNKNOWN     = 0;
+    YELLOWING   = 1;
+    FIRST_CRACK = 2;
+    DEVELOPMENT = 3;
+    COOL_DOWN   = 4;
+  }
+  StageType stage = 3;
+}
+
+// Main profile message - unified view of all observed variations
+//
+// IMPORTANT: This schema uses 'oneof' to document type variations, but the actual
+// wire format doesn't use oneof - the decoder must handle type detection dynamically.
+message IkawaProfile {
+  // Field 1: Version number (always present, always int32)
+  int32 version = 1;
+
+  // Field 2: Device token (always present)
+  // Usually 16 bytes, but sometimes decoded as nested message due to wire-type ambiguity
+  bytes device_token = 2;
+
+  // Field 3: Profile name (always present)
+  // Usually a plain string, but wire-type 2 can be misinterpreted as nested message
+  string profile_name = 3;
+
+  // Field 4: Temperature curve points (always present, 4-7 points typical)
+  // First point is always (0, 500) = 0 seconds, 50.0°C starting temperature
+  repeated Point curve_points = 4;
+
+  // Field 5: Airflow/annotation points (always present, 2-3 points typical)
+  // Defines airflow changes during the roast
+  repeated Point annotations = 5;
+
+  // Field 6: Flag (always present, usually 1)
+  int32 flag = 6;
+
+  // Field 7: Meta points (always present, usually 1 point)
+  // Appears to mark end of roast or cooling start
+  repeated Point meta_points = 7;
+
+  // Field 8: Metadata (86% of profiles)
+  // VARIATION: Can be nested Metadata message (84%) or plain string (2%)
+  // When absent, fields 9 and 12 may contain equivalent data
+  //
+  // For decoding: Try as Metadata message first, fall back to string
+  Metadata metadata = 8;
+
+  // Field 9: Alternative share token (16% of profiles)
+  // Present when field 8 is absent - contains the share_token directly
+  string extra_string_9 = 9;
+
+  // Field 10: Unknown nested message (2% of profiles)
+  // Rarely present, structure unclear - may contain additional metadata
+  bytes field_10 = 10;
+
+  // Field 12: Alternative flag string (16% of profiles)
+  // Present when field 8 is absent - typically contains "0"
+  string extra_string_12 = 12;
+
+  // Field 20: Roast markers (convenience field, not in wire format)
+  // Derived from meta_points and other fields during parsing
+  repeated RoastMarker roast_markers = 20;
+}
+
+// ============================================================================
+// DECODER IMPLEMENTATION NOTES
+// ============================================================================
+//
+// The decoder should follow this fallback chain:
+//
+// 1. Try decoding with ikawa_profile.proto (main schema)
+//    - This works for ~84% of profiles with nested Metadata
+//
+// 2. If field 8 fails, try legacy_ikawa_profile.proto
+//    - Same structure, different package name
+//
+// 3. If both fail, use wire-format decoding:
+//    a. Parse each field by wire type (varint, length-delimited, etc.)
+//    b. For length-delimited fields, try nested message decode first
+//    c. Fall back to string/bytes interpretation
+//    d. Transform to canonical internal format
+//
+// 4. Normalize the result:
+//    - Extract profile_name from field 3 (handle nested message case)
+//    - Extract curve_points from field 4_msg nested messages
+//    - Extract annotations from field 5_msg nested messages
+//    - Extract metadata from field 8 OR fields 9/12
+//    - Derive roast_markers from meta_points
+//
+// ============================================================================
+// CANONICAL INTERNAL FORMAT (TypeScript)
+// ============================================================================
+//
+// interface IkawaProfile {
+//   version: number;
+//   device_token?: Uint8Array;
+//   profile_name: string;
+//   curve_points: Array<{x: number, y: number}>;
+//   annotations: Array<{x: number, y: number}>;
+//   flag: number;
+//   meta_points: Array<{x: number, y: number}>;
+//   metadata?: {
+//     share_token?: string;
+//     short_id?: string;
+//     farm?: string;
+//     spare?: string;
+//     zero?: number;
+//   };
+//   roast_markers?: Array<{
+//     time_raw: number;
+//     label?: string;
+//     stage: string;
+//   }>;
+// }
+//
+// ============================================================================
+// UNIT CONVERSIONS
+// ============================================================================
+//
+// Time:        raw_x / 10 = seconds
+// Temperature: raw_y / 10 = degrees Celsius
+//
+// Example: curve_point {x: 3158, y: 2550}
+//          = 315.8 seconds (5:15.8)
+//          = 255.0°C
+//
+// ============================================================================
