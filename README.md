@@ -22,7 +22,7 @@ Direct Bluetooth control requires:
   - Chrome
   - Edge
 
-iPhone/iPad Safari is not currently a supported direct-Bluetooth target.
+iPhone and iPad Safari are not currently supported direct-Bluetooth targets.
 
 ## Safety
 
@@ -36,6 +36,23 @@ npm run dev
 ```
 
 Open `http://localhost:5173`.
+
+## GitHub Pages Deployment
+
+This repo is configured for GitHub Pages deployment from the `main` branch via GitHub Actions.
+
+Expected repository settings:
+
+- Pages source: `GitHub Actions`
+- Repository name: `freekawa-web`
+- Published site URL: `https://tylergunderson.github.io/freekawa-web/`
+
+Manual verification after deploy:
+
+- open the published site over `https`
+- verify the editor loads
+- verify the proto assets load correctly under the `/freekawa-web/` base path
+- verify direct Bluetooth still works in a supported Chromium browser
 
 ## Packages
 
