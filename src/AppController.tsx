@@ -183,7 +183,7 @@ const tempWarnBandPlugin = {
 
 ChartJS.register(airflowCrosshairPlugin, tempWarnBandPlugin);
 
-const PROTO_PATH = "/proto/ikawa_profile.proto";
+const PROTO_PATH = `${import.meta.env.BASE_URL}proto/ikawa_profile.proto`;
 
 // Extract roast markers from a guessed/decoded profile object
 // Roast markers are typically not directly present in the wire format
