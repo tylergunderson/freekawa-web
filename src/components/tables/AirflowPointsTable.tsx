@@ -59,7 +59,11 @@ export const AirflowPointsTable = memo(function AirflowPointsTable({
                 Airflow Points
             </Typography>
             <Box sx={{ mb: 1 }}>
-                <Button variant="outlined" onClick={addAirflowPoint}>
+                <Button
+                    variant="outlined"
+                    onClick={addAirflowPoint}
+                    disabled={displayAirflowPoints.filter((p) => p.source === "annotation").length >= 3}
+                >
                     Add airflow point
                 </Button>
             </Box>
@@ -146,14 +150,13 @@ export const AirflowPointsTable = memo(function AirflowPointsTable({
                                     <TextField
                                         type="number"
                                         inputProps={{
-                                            min: 0,
+                                            min: 60,
                                             max: 100,
                                             step: 1,
                                         }}
                                         value={airflowRawToPercent(pt.y)}
                                         size="small"
                                         sx={{ width: 110 }}
-                                        disabled={i === 0}
                                         helperText={undefined}
                                         onChange={(e) =>
                                             updateAirflowPoint(
@@ -171,7 +174,7 @@ export const AirflowPointsTable = memo(function AirflowPointsTable({
                                     <Button
                                         size="small"
                                         color="error"
-                                        disabled={pt.source === "meta"}
+                                        disabled={pt.source === "meta" || (pt.source === "annotation" && pt.index === 0)}
                                         onClick={() => removeAirflowPoint(pt.index)}
                                     >
                                         Remove
