@@ -1394,6 +1394,7 @@ export default function App({
     const addAirflowPoint = () => {
         const p = { ...(profile || {}) };
         const cur = p.annotations || [];
+        if (cur.length >= MAX_AIRFLOW_POINTS) return;
         if (cur.length === 1) {
             const start = cur[0];
             const lastCurveX =

@@ -59,7 +59,11 @@ export const AirflowPointsTable = memo(function AirflowPointsTable({
                 Airflow Points
             </Typography>
             <Box sx={{ mb: 1 }}>
-                <Button variant="outlined" onClick={addAirflowPoint}>
+                <Button
+                    variant="outlined"
+                    onClick={addAirflowPoint}
+                    disabled={displayAirflowPoints.filter((p) => p.source === "annotation").length >= 3}
+                >
                     Add airflow point
                 </Button>
             </Box>
