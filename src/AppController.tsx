@@ -2018,7 +2018,7 @@ export default function App({
                         points={points}
                         displayAirflowPoints={displayAirflowPoints}
                         maxRoastSeconds={MAX_ROAST_SECONDS}
-                        minTempDisplay={tempToDisplay(MIN_TEMP_CELSIUS)}
+                        minTempDisplay={tempToDisplayInt(MIN_TEMP_CELSIUS)}
                         maxTempDisplay={tempToDisplayInt(MAX_TEMP_CELSIUS)}
                         addPoint={addPoint}
                         addAirflowPoint={addAirflowPoint}
