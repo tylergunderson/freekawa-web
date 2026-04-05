@@ -40,6 +40,7 @@ interface ProfileEditorProps {
         source: "annotation" | "meta";
     }>;
     maxRoastSeconds: number;
+    minTempDisplay: number;
     maxTempDisplay: number;
     addPoint: () => void;
     addAirflowPoint: () => void;
@@ -90,6 +91,7 @@ export function ProfileEditor({
     points,
     displayAirflowPoints,
     maxRoastSeconds,
+    minTempDisplay,
     maxTempDisplay,
     addPoint,
     addAirflowPoint,
@@ -242,6 +244,7 @@ export function ProfileEditor({
                 points={points}
                 tempUnitLabel={tempUnitLabel}
                 maxRoastSeconds={maxRoastSeconds}
+                minTempDisplay={minTempDisplay}
                 maxTempDisplay={maxTempDisplay}
                 addPoint={addPoint}
                 setPointTimeSeconds={setPointTimeSeconds}

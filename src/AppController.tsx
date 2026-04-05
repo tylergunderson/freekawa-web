@@ -17,6 +17,7 @@ import {
     META_AIRFLOW_MIN_RAW,
     MIN_AIRFLOW_RAW,
     MIN_COOLDOWN_SECONDS,
+    MIN_TEMP_CELSIUS,
     WARN_TEMP_CELSIUS,
     MAX_TEMP_POINTS,
 } from "./rules";
@@ -1104,7 +1105,7 @@ export default function App({
                                         ),
                                     )
                                   : Math.max(
-                                        0,
+                                        MIN_TEMP_CELSIUS * 10,
                                         Math.min(Number(val), MAX_RAW_Y),
                                     ),
                       }
@@ -1139,7 +1140,7 @@ export default function App({
     const updateCurvePointXY = (idx: number, rawX: number, rawY: number) => {
         if (idx === 0) return;
         const maxRawX = MAX_ROAST_SECONDS * 10;
-        const clampedY = Math.max(0, Math.min(Number(rawY), MAX_RAW_Y));
+        const clampedY = Math.max(MIN_TEMP_CELSIUS * 10, Math.min(Number(rawY), MAX_RAW_Y));
         setProfile((prev: any) => {
             const p = { ...prev };
             const curvePointsLength = (p.curve_points || []).length;
@@ -1197,7 +1198,7 @@ export default function App({
         let displayVal = Number(degVal);
         if (Number.isNaN(displayVal)) return;
         if (snapEnabled) displayVal = Math.round(displayVal);
-        const celsius = displayToTempC(displayVal);
+        const celsius = Math.max(MIN_TEMP_CELSIUS, Math.min(displayToTempC(displayVal), MAX_TEMP_CELSIUS));
         const raw = Math.round(celsius * 10);
         updateCurvePoint(idx, "y", raw);
     };
@@ -1555,9 +1556,9 @@ export default function App({
                 errs.push(
                     `Temp point ${i} time out of range (0 - ${MAX_ROAST_SECONDS}s)`,
                 );
-            if (Number(pt.y) < 0 || Number(pt.y) > MAX_RAW_Y)
+            if (Number(pt.y) < MIN_TEMP_CELSIUS * 10 || Number(pt.y) > MAX_RAW_Y)
                 errs.push(
-                    `Temp point ${i} temperature out of range (0 - ${MAX_TEMP_CELSIUS}°C)`,
+                    `Temp point ${i} temperature out of range (${MIN_TEMP_CELSIUS} - ${MAX_TEMP_CELSIUS}°C)`,
                 );
         });
         ap.forEach((pt: any, i: number) => {
@@ -2017,6 +2018,7 @@ export default function App({
                         points={points}
                         displayAirflowPoints={displayAirflowPoints}
                         maxRoastSeconds={MAX_ROAST_SECONDS}
+                        minTempDisplay={tempToDisplay(MIN_TEMP_CELSIUS)}
                         maxTempDisplay={tempToDisplayInt(MAX_TEMP_CELSIUS)}
                         addPoint={addPoint}
                         addAirflowPoint={addAirflowPoint}

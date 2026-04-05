@@ -24,6 +24,7 @@ interface TemperaturePointsTableProps {
     points: TemperaturePoint[];
     tempUnitLabel: string;
     maxRoastSeconds: number;
+    minTempDisplay: number;
     maxTempDisplay: number;
     addPoint: () => void;
     setPointTimeSeconds: (idx: number, value: string) => void;
@@ -36,6 +37,7 @@ export const TemperaturePointsTable = memo(function TemperaturePointsTable({
     points,
     tempUnitLabel,
     maxRoastSeconds,
+    minTempDisplay,
     maxTempDisplay,
     addPoint,
     setPointTimeSeconds,
@@ -135,7 +137,7 @@ export const TemperaturePointsTable = memo(function TemperaturePointsTable({
                                     <TextField
                                         type="number"
                                         inputProps={{
-                                            min: 0,
+                                            min: minTempDisplay,
                                             max: maxTempDisplay,
                                             step: 1,
                                         }}
