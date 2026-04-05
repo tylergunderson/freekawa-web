@@ -157,7 +157,6 @@ export const AirflowPointsTable = memo(function AirflowPointsTable({
                                         value={airflowRawToPercent(pt.y)}
                                         size="small"
                                         sx={{ width: 110 }}
-                                        disabled={i === 0}
                                         helperText={undefined}
                                         onChange={(e) =>
                                             updateAirflowPoint(
