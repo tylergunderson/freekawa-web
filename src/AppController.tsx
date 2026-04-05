@@ -15,6 +15,7 @@ import {
     MAX_TEMP_CELSIUS,
     META_AIRFLOW_MAX_RAW,
     META_AIRFLOW_MIN_RAW,
+    MIN_AIRFLOW_RAW,
     MIN_COOLDOWN_SECONDS,
     WARN_TEMP_CELSIUS,
     MAX_TEMP_POINTS,
@@ -1260,7 +1261,7 @@ export default function App({
                                       ? lastCurveX
                                       : Math.min(Number(val), maxRawX)
                                   : Math.max(
-                                        0,
+                                        MIN_AIRFLOW_RAW,
                                         Math.min(Number(val), MAX_AIRFLOW_RAW),
                                     ),
                       }
@@ -1312,7 +1313,7 @@ export default function App({
                               i === lastAnnotationIndex
                                   ? lastCurveX
                                   : Math.min(rawX, maxRawX),
-                          y: Math.max(0, Math.min(rawY, MAX_AIRFLOW_RAW)),
+                          y: Math.max(MIN_AIRFLOW_RAW, Math.min(rawY, MAX_AIRFLOW_RAW)),
                       }
                     : pt,
             );
@@ -1564,9 +1565,9 @@ export default function App({
                 errs.push(
                     `Airflow point ${i} time out of range (0 - ${MAX_ROAST_SECONDS}s)`,
                 );
-            if (Number(pt.y) < 0 || Number(pt.y) > MAX_AIRFLOW_RAW)
+            if (Number(pt.y) < MIN_AIRFLOW_RAW || Number(pt.y) > MAX_AIRFLOW_RAW)
                 errs.push(
-                    `Airflow point ${i} value out of range (0 - ${MAX_AIRFLOW_RAW})`,
+                    `Airflow point ${i} value out of range (${MIN_AIRFLOW_RAW} - ${MAX_AIRFLOW_RAW})`,
                 );
         });
         const mp = profile?.meta_points || [];

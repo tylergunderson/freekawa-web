@@ -150,7 +150,7 @@ export const AirflowPointsTable = memo(function AirflowPointsTable({
                                     <TextField
                                         type="number"
                                         inputProps={{
-                                            min: 0,
+                                            min: 60,
                                             max: 100,
                                             step: 1,
                                         }}
