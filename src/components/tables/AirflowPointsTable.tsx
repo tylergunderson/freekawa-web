@@ -174,7 +174,7 @@ export const AirflowPointsTable = memo(function AirflowPointsTable({
                                     <Button
                                         size="small"
                                         color="error"
-                                        disabled={pt.source === "meta"}
+                                        disabled={pt.source === "meta" || (pt.source === "annotation" && pt.index === 0)}
                                         onClick={() => removeAirflowPoint(pt.index)}
                                     >
                                         Remove

@@ -1411,7 +1411,7 @@ export default function App({
             const midX = Math.round(
                 (Number(start?.x || 0) + Number(endX || 0)) / 2,
             );
-            const yVal = Number(start?.y ?? 0);
+            const yVal = Math.max(MIN_AIRFLOW_RAW, Number(start?.y ?? MIN_AIRFLOW_RAW));
             p.annotations = [
                 { x: Number(start?.x || 0), y: yVal },
                 { x: midX, y: yVal },
@@ -1423,14 +1423,14 @@ export default function App({
             const midX = Math.round(
                 (Number(prev?.x || 0) + Number(last?.x || 0)) / 2 || 0,
             );
-            const midY = Number(prev?.y ?? last?.y ?? 0);
+            const midY = Math.max(MIN_AIRFLOW_RAW, Number(prev?.y ?? last?.y ?? MIN_AIRFLOW_RAW));
             p.annotations = [
                 ...cur.slice(0, cur.length - 1),
                 { x: midX, y: midY },
                 last,
             ];
         } else {
-            p.annotations = [...cur, { x: 0, y: 0 }];
+            p.annotations = [...cur, { x: 0, y: MIN_AIRFLOW_RAW }];
         }
         setProfile(p);
     };
@@ -1461,6 +1461,7 @@ export default function App({
         setProfile(p);
     };
     const removeAirflowPoint = (idx: number) => {
+        if (idx === 0) return;
         const p = { ...profile };
         p.annotations = (p.annotations || []).filter(
             (_: any, i: number) => i !== idx,
